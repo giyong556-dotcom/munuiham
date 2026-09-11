@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, Request, UploadFile, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -143,7 +143,46 @@ def render_landing(request: Request, slug: str = "dalseo-prugio", *, values=None
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     """Default home → 달서자이 제니크 랜딩. 푸르지오는 /l/dalseo-prugio."""
-    return render_landing(request, "dalseo-xi-zenique")
+    return render_landing(request, "dalseo-xi")
+
+
+@app.get("/api/notify/leads")
+async def notify_leads(request: Request, since: int = 0, token: str = ""):
+    """Internal poll endpoint for lead email alerts. Requires NOTIFY_TOKEN."""
+    expected = NOTIFY_TOKEN or ""
+    provided = token or request.headers.get("x-notify-token", "")
+    if not expected or provided != expected:
+        return HTMLResponse("unauthorized", status_code=401)
+    with database.db() as conn:
+        rows = conn.execute(
+            """
+            SELECT leads.id, leads.name, leads.phone, leads.complex_name, leads.unit_size,
+                   leads.move_timing, leads.message, leads.source, leads.created_at,
+                   forms.slug AS form_slug, forms.title AS form_title
+            FROM leads
+            JOIN forms ON forms.id = leads.form_id
+            WHERE leads.id > ?
+            ORDER BY leads.id ASC
+            """,
+            (since,),
+        ).fetchall()
+    return JSONResponse([
+        {
+            "id": r["id"],
+            "name": r["name"],
+            "phone": r["phone"],
+            "complex_name": r["complex_name"],
+            "unit_size": r["unit_size"],
+            "move_timing": r["move_timing"],
+            "message": r["message"],
+            "source": r["source"],
+            "created_at": r["created_at"],
+            "form_slug": r["form_slug"],
+            "form_title": r["form_title"],
+        }
+        for r in rows
+    ])
+
 
 
 @app.get("/l/{slug}", response_class=HTMLResponse)
