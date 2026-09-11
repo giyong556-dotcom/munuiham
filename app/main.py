@@ -23,6 +23,7 @@ ALLOWED_IMAGE_MIME = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "change-me")
+NOTIFY_TOKEN = os.environ.get("NOTIFY_TOKEN", "")
 SESSION_SECRET = os.environ.get("SESSION_SECRET", "munuiham-dev-secret-change-in-prod")
 
 PHONE_RE = re.compile(r"^01[016789]-?\d{3,4}-?\d{4}$")
