@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}{{ form.title }} · 문의함{% endblock %}
+{% block body %}
+  <div class="brand">
+    <div class="brand-mark">문</div>
+    <div class="brand-text">
+      <strong>문의함</strong>
+      <span>인테리어 견적 문의</span>
+    </div>
+  </div>
+
+  <section class="hero">
+    <h1>{{ form.title }}</h1>
+    <p>{{ form.welcome_text }}</p>
+  </section>
+
+  {% if error %}
+  <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <form accept-charset="UTF-8" class="card" method="post" action="/f/{{ form.slug }}" novalidate>
+    <div class="field">
+      <label for="name">이름<span class="req">*</span></label>
+      <input class="control" id="name" name="name" type="text" required autocomplete="name"
+             placeholder="홍길동" value="{{ values.get('name','') }}" />
+    </div>
+
+    <div class="field">
+      <label for="phone">연락처<span class="req">*</span></label>
+      <input class="control" id="phone" name="phone" type="tel" inputmode="tel" required
+             autocomplete="tel" placeholder="010-1234-5678"
+             value="{{ values.get('phone','') }}" />
+      <div class="hint">휴대폰 번호를 입력해 주세요</div>
+    </div>
+
+    <div class="field">
+      <label>시공 유형</label>
+      <div class="chip-row">
+        {% for t in ['전체 리모델링','부분 공사','상업공간','상담만'] %}
+        <label class="chip">
+          <input type="radio" name="work_type" value="{{ t }}" {% if values.get('work_type')==t %}checked{% endif %} />
+          <span>{{ t }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="field">
+      <label>평수</label>
+      <div class="chip-row">
+        {% for s in ['10평 미만','10~20평','20~30평','30평 이상'] %}
+        <label class="chip">
+          <input type="radio" name="unit_size" value="{{ s }}" {% if values.get('unit_size')==s %}checked{% endif %} />
+          <span>{{ s }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="field">
+      <label>예산대</label>
+      <div class="chip-row">
+        {% for b in ['1천만 이하','1~3천만','3~5천만','5천만 이상','상담 후 결정'] %}
+        <label class="chip">
+          <input type="radio" name="budget" value="{{ b }}" {% if values.get('budget')==b %}checked{% endif %} />
+          <span>{{ b }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="field">
+      <label>희망 시기</label>
+      <div class="chip-row">
+        {% for t in ['가능한 빨리','1개월 내','3개월 내','미정'] %}
+        <label class="chip">
+          <input type="radio" name="move_timing" value="{{ t }}" {% if values.get('move_timing')==t %}checked{% endif %} />
+          <span>{{ t }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="complex_name">시공 지역</label>
+      <input class="control" id="complex_name" name="complex_name" type="text"
+             placeholder="예: 대구 달서구 OO아파트"
+             value="{{ values.get('complex_name','') }}" />
+    </div>
+
+    <div class="field">
+      <label for="message">문의 내용</label>
+      <textarea class="control" id="message" name="message" placeholder="원하시는 시공 범위·스타일 등을 자유롭게 적어 주세요">{{ values.get('message','') }}</textarea>
+    </div>
+
+    <div class="field">
+      <label>유입경로</label>
+      <div class="chip-row">
+        {% for src in ['인스타','네이버','카카오','지인','기타'] %}
+        <label class="chip">
+          <input type="radio" name="source" value="{{ src }}" {% if values.get('source')==src %}checked{% endif %} />
+          <span>{{ src }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- honeypot -->
+    <div class="hp" aria-hidden="true">
+      <label for="website">웹사이트</label>
+      <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">무료 견적 문의 보내기</button>
+  </form>
+
+  <p class="footer-note">문의함 · 개인정보는 상담 목적으로만 사용됩니다</p>
+{% endblock %}

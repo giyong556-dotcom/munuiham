@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ lead.name }} · 문의함{% endblock %}
+{% block body %}
+  <div class="topbar">
+    <a class="pill" href="/admin">← 목록</a>
+    <span class="status-tag status-{{ lead.status }}">{{ status_label(lead.status, interior=is_interior) }}</span>
+  </div>
+
+  <h1 style="margin:0 0 14px;font-size:22px;letter-spacing:-0.03em;">{{ lead.name }}</h1>
+  {% if is_interior %}
+  <p style="margin:-8px 0 14px;color:var(--muted);font-size:13px;">인테리어 견적 · {{ lead.form_title }}</p>
+  {% endif %}
+
+  {% if request.query_params.get('saved') == '1' %}
+  <div class="alert alert-ok">저장되었습니다.</div>
+  {% endif %}
+
+  <div class="card" style="margin-bottom:14px;">
+    <div class="detail-grid">
+      <div class="kv"><div class="k">연락처</div><div class="v"><a href="tel:{{ lead.phone }}">{{ lead.phone }}</a></div></div>
+      {% if is_interior %}
+      <div class="kv"><div class="k">시공 지역</div><div class="v">{{ lead.complex_name }}</div></div>
+      <div class="kv"><div class="k">시공 유형</div><div class="v">{{ meta.get('work_type') or '-' }}</div></div>
+      <div class="kv"><div class="k">평수</div><div class="v">{{ lead.unit_size or '-' }}</div></div>
+      <div class="kv"><div class="k">예산대</div><div class="v">{{ lead.budget or '-' }}</div></div>
+      <div class="kv"><div class="k">희망 시기</div><div class="v">{{ lead.move_timing or '-' }}</div></div>
+      {% else %}
+      <div class="kv"><div class="k">관심 단지</div><div class="v">{{ lead.complex_name }}</div></div>
+      <div class="kv"><div class="k">예산대</div><div class="v">{{ lead.budget or '-' }}</div></div>
+      <div class="kv"><div class="k">타입 (84㎡)</div><div class="v">{{ lead.unit_size or '-' }}</div></div>
+      <div class="kv"><div class="k">연령대</div><div class="v">{{ lead.move_timing or '-' }}</div></div>
+      {% endif %}
+      <div class="kv"><div class="k">유입경로</div><div class="v">{{ lead.source or '-' }}</div></div>
+      <div class="kv"><div class="k">문의 내용</div><div class="v">{{ lead.message or '-' }}</div></div>
+      <div class="kv"><div class="k">접수 시각</div><div class="v">{{ lead.created_at }}</div></div>
+    </div>
+  </div>
+
+  <form accept-charset="UTF-8" class="card" method="post" action="/admin/leads/{{ lead.id }}">
+    <div class="field">
+      <label for="status">상담 상태</label>
+      <select class="control" id="status" name="status">
+        {% for s in statuses %}
+        <option value="{{ s }}" {% if lead.status==s %}selected{% endif %}>{{ status_label(s, interior=is_interior) }}</option>
+        {% endfor %}
+      </select>
+      {% if is_interior %}
+      <div class="hint">실측예정 = 방문예정 · 견적발송은 아래 메모에 기록해 주세요</div>
+      {% endif %}
+    </div>
+    <div class="field">
+      <label for="notes">메모</label>
+      <textarea class="control" id="notes" name="notes" placeholder="{% if is_interior %}실측·견적발송 등 상담 메모{% else %}상담 메모를 남겨 주세요{% endif %}">{{ lead.notes }}</textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-accent" type="submit">저장하기</button>
+      <a class="btn btn-primary" href="tel:{{ lead.phone }}">전화 걸기</a>
+    </div>
+  </form>
+
+  <nav class="bottom-nav">
+    <a href="/admin">목록</a>
+    <a href="/admin/landing">랜딩</a>
+    <a href="/admin/settings">설정</a>
+    <a href="/l/dalseo-xi" target="_blank" rel="noopener">미리보기</a>
+  </nav>
+{% endblock %}

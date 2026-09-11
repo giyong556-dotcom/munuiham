@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: munuiham
+    runtime: docker
+    plan: free
+    region: singapore
+    healthCheckPath: /l/dalseo-xi
+    envVars:
+      - key: ADMIN_PASSWORD
+        value: change-me
+      - key: SESSION_SECRET
+        generateValue: true

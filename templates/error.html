@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}오류 · 문의함{% endblock %}
+{% block body %}
+  <div class="brand">
+    <div class="brand-mark">문</div>
+    <div class="brand-text">
+      <strong>문의함</strong>
+      <span>오류</span>
+    </div>
+  </div>
+  <div class="card" style="text-align:center;padding:36px 18px;">
+    <div style="font-size:42px;font-weight:800;margin-bottom:10px;">{{ code or 404 }}</div>
+    <p style="color:var(--muted);margin:0 0 24px;">{{ message }}</p>
+    <a class="btn btn-ghost" href="/">홈으로</a>
+  </div>
+{% endblock %}

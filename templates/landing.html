@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% set L = landing or {} %}
+{% set hls = L.highlights if L.highlights is defined else [] %}
+{% block title %}{{ L.hero_title or form.title }} · 문의함{% endblock %}
+{% block body %}
+  <div class="landing">
+    <div class="brand">
+      <div class="brand-mark">문</div>
+      <div class="brand-text">
+        <strong>문의함</strong>
+        <span>분양 상담 안내</span>
+      </div>
+    </div>
+
+    <section class="landing-hero">
+      {% if L.hero_image %}
+      <div class="landing-hero-media">
+        <img src="{{ L.hero_image }}" alt="{{ L.hero_title or form.title }}" />
+      </div>
+      {% endif %}
+      <p class="landing-badge">{{ L.hero_eyebrow or '대구 달서 · 분양 상담' }}</p>
+      <h1>{{ L.hero_title or form.title }}</h1>
+      <p class="landing-hook">{{ L.hero_subtitle or '9월부터 분양가 약 1억 조정 · 준공 후 미분양' }}</p>
+      <p class="landing-sub">{{ L.hero_lead or '모델하우스 방문·조건 상담을 편하게 받아 보세요. 부담 없는 무료 상담입니다.' }}</p>
+    </section>
+
+    {% if L.gallery %}
+    <section class="landing-gallery" aria-label="단지 사진">
+      {% for img in L.gallery %}
+      <figure class="landing-gallery-item">
+        <img src="{{ img }}" alt="갤러리 {{ loop.index }}" loading="lazy" />
+      </figure>
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    <section class="landing-points" aria-label="핵심 안내">
+      {% set defaults = [
+        {'title':'전용 84㎡','body':'A / B / C 타입','icon':'📐'},
+        {'title':'대단지','body':'생활·단지 인프라','icon':'🏘'},
+        {'title':'준공 후 미분양','body':'주택수·취득세 관점 안내 가능','icon':'🏠'},
+        {'title':'모델하우스 상담','body':'일정·조건 맞춤 안내','icon':'💬'}
+      ] %}
+      {% set icons = ['📐','🏘','🏠','💬'] %}
+      {% for i in range(4) %}
+      {% set h = hls[i] if hls|length > i else defaults[i] %}
+      {% set title = h.title if h.title else defaults[i].title %}
+      {% set body = h.body if h.body else defaults[i].body %}
+      <div class="benefit-card">
+        <span class="benefit-icon" aria-hidden="true">{{ icons[i] }}</span>
+        <div>
+          <strong>{{ title }}</strong>
+          <span>{{ body }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+
+    <section class="landing-trust card">
+      <h2>이렇게 진행됩니다</h2>
+      <ol class="trust-steps">
+        <li>아래 버튼으로 간단한 상담 신청</li>
+        <li>담당자가 연락드려 일정·조건 안내</li>
+        <li>필요 시 모델하우스 방문 조율</li>
+      </ol>
+      <p class="trust-note">{{ L.disclaimer or '개인정보는 상담 목적에만 사용되며, 스팸·광고 문자를 보내지 않습니다.' }}</p>
+    </section>
+
+    <p class="landing-secondary">
+      <a href="/f/{{ form.slug }}">이미 문의하셨다면 폼으로 바로 가기 →</a>
+    </p>
+
+    <div class="landing-cta-spacer" aria-hidden="true"></div>
+
+    <div class="landing-cta-bar">
+      <a class="btn btn-primary" href="/f/{{ form.slug }}">{{ L.hero_cta or '무료 상담 신청' }}</a>
+    </div>
+  </div>
+{% endblock %}

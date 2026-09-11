@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}랜딩 편집 · 문의함{% endblock %}
+{% block head %}
+  <meta name="theme-color" content="#3182f6" />
+{% endblock %}
+{% block body %}
+  <div class="topbar">
+    <h1>랜딩 편집</h1>
+    <form method="post" action="/admin/logout" style="margin:0;">
+      <button class="pill" type="submit" style="cursor:pointer;">로그아웃</button>
+    </form>
+  </div>
+
+  <div class="nav-pills" style="flex-wrap:wrap;">
+    {% for s in landing_slugs %}
+    <a class="pill {% if slug==s %}active{% endif %}" href="/admin/landing/{{ s }}">{{ landing_labels.get(s, s) }}</a>
+    {% endfor %}
+  </div>
+
+  {% if saved %}
+  <div class="alert alert-ok">저장되었습니다. 공개 페이지에 바로 반영됩니다.</div>
+  {% endif %}
+  {% if error %}
+  <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <div class="card admin-landing-card">
+    <div class="field" style="margin-bottom:10px;">
+      <label>미리보기</label>
+      <a class="btn btn-accent" href="{{ preview_path }}" target="_blank" rel="noopener" style="text-align:center;display:block;">
+        공개 랜딩 열기 →
+      </a>
+      <div class="hint">{{ preview_path }} · {{ label }}</div>
+    </div>
+  </div>
+
+  {# ── Hero image ── #}
+  <div class="card admin-landing-card">
+    <h2 class="admin-section-title">대표 사진 (히어로)</h2>
+    {% if landing.hero_image %}
+    <div class="admin-img-preview">
+      <img src="{{ landing.hero_image }}" alt="히어로 이미지" />
+    </div>
+    <form method="post" action="/admin/landing/{{ slug }}/clear-hero" style="margin-bottom:12px;">
+      <button class="btn btn-ghost" type="submit" style="width:100%;">대표 사진 삭제</button>
+    </form>
+    {% else %}
+    <p class="hint" style="margin-top:0;">아직 업로드된 대표 사진이 없습니다.</p>
+    {% endif %}
+    <form method="post" action="/admin/landing/{{ slug }}/upload-hero" enctype="multipart/form-data">
+      <div class="field">
+        <label for="hero_file">사진 선택 (jpg / png / webp · 최대 5MB)</label>
+        <input class="control admin-file" id="hero_file" name="image" type="file"
+               accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required />
+      </div>
+      <button class="btn btn-accent" type="submit">대표 사진 업로드</button>
+    </form>
+  </div>
+
+  {# ── Gallery ── #}
+  <div class="card admin-landing-card">
+    <h2 class="admin-section-title">갤러리 사진</h2>
+    {% if landing.gallery %}
+    <ul class="admin-gallery-list">
+      {% for img in landing.gallery %}
+      <li class="admin-gallery-item">
+        <img src="{{ img }}" alt="갤러리 {{ loop.index }}" />
+        <div class="admin-gallery-actions">
+          <form method="post" action="/admin/landing/{{ slug }}/gallery/move">
+            <input type="hidden" name="index" value="{{ loop.index0 }}" />
+            <input type="hidden" name="direction" value="up" />
+            <button class="pill" type="submit" {% if loop.first %}disabled{% endif %}>▲</button>
+          </form>
+          <form method="post" action="/admin/landing/{{ slug }}/gallery/move">
+            <input type="hidden" name="index" value="{{ loop.index0 }}" />
+            <input type="hidden" name="direction" value="down" />
+            <button class="pill" type="submit" {% if loop.last %}disabled{% endif %}>▼</button>
+          </form>
+          <form method="post" action="/admin/landing/{{ slug }}/gallery/delete"
+                onsubmit="return confirm('이 사진을 삭제할까요?');">
+            <input type="hidden" name="index" value="{{ loop.index0 }}" />
+            <button class="pill pill-danger" type="submit">삭제</button>
+          </form>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="hint" style="margin-top:0;">갤러리 사진이 없습니다. 아래에서 추가하세요.</p>
+    {% endif %}
+    <form method="post" action="/admin/landing/{{ slug }}/upload-gallery" enctype="multipart/form-data">
+      <div class="field">
+        <label for="gallery_file">갤러리 사진 추가</label>
+        <input class="control admin-file" id="gallery_file" name="image" type="file"
+               accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required />
+      </div>
+      <button class="btn btn-accent" type="submit">갤러리 사진 업로드</button>
+    </form>
+  </div>
+
+  {# ── Text fields ── #}
+  <form class="card admin-landing-card" method="post" action="/admin/landing/{{ slug }}" accept-charset="UTF-8">
+    <h2 class="admin-section-title">히어로 문구</h2>
+    <div class="field">
+      <label for="hero_eyebrow">상단 작은 문구</label>
+      <input class="control" id="hero_eyebrow" name="hero_eyebrow" type="text"
+             value="{{ landing.hero_eyebrow or '' }}" placeholder="예: 대구 달서 · 본리동" />
+    </div>
+    <div class="field">
+      <label for="hero_title">제목 (히어로)</label>
+      <input class="control" id="hero_title" name="hero_title" type="text"
+             value="{{ landing.hero_title or '' }}" placeholder="단지명" />
+    </div>
+    <div class="field">
+      <label for="hero_subtitle">부제 / 슬로건</label>
+      <textarea class="control" id="hero_subtitle" name="hero_subtitle" rows="3"
+                placeholder="한 줄 또는 두 줄 슬로건">{{ landing.hero_subtitle or '' }}</textarea>
+    </div>
+    <div class="field">
+      <label for="hero_lead">히어로 설명</label>
+      <textarea class="control" id="hero_lead" name="hero_lead" rows="3">{{ landing.hero_lead or '' }}</textarea>
+    </div>
+    <div class="field">
+      <label for="hero_cta">버튼 문구</label>
+      <input class="control" id="hero_cta" name="hero_cta" type="text"
+             value="{{ landing.hero_cta or '' }}" placeholder="무료 상담 신청" />
+    </div>
+
+    <h2 class="admin-section-title">핵심 정보 (팩트)</h2>
+    <div class="field">
+      <label for="fact_location">입지</label>
+      <input class="control" id="fact_location" name="fact_location" type="text"
+             value="{{ landing.fact_location or '' }}" />
+      <input class="control" style="margin-top:8px;" name="fact_location_detail" type="text"
+             value="{{ landing.fact_location_detail or '' }}" placeholder="상세 설명" />
+    </div>
+    <div class="field">
+      <label for="fact_scale">규모</label>
+      <input class="control" id="fact_scale" name="fact_scale" type="text"
+             value="{{ landing.fact_scale or '' }}" />
+      <input class="control" style="margin-top:8px;" name="fact_scale_detail" type="text"
+             value="{{ landing.fact_scale_detail or '' }}" placeholder="상세 설명" />
+    </div>
+    <div class="field">
+      <label for="fact_unit">평형 / 타입</label>
+      <input class="control" id="fact_unit" name="fact_unit" type="text"
+             value="{{ landing.fact_unit or '' }}" />
+      <input class="control" style="margin-top:8px;" name="fact_unit_detail" type="text"
+             value="{{ landing.fact_unit_detail or '' }}" placeholder="상세 설명" />
+    </div>
+    <div class="field">
+      <label for="fact_move_in">입주</label>
+      <input class="control" id="fact_move_in" name="fact_move_in" type="text"
+             value="{{ landing.fact_move_in or '' }}" />
+      <input class="control" style="margin-top:8px;" name="fact_move_in_detail" type="text"
+             value="{{ landing.fact_move_in_detail or '' }}" placeholder="상세 설명" />
+    </div>
+
+    <h2 class="admin-section-title">하이라이트 (4개)</h2>
+    {% set hls = landing.highlights or [] %}
+    {% for i in range(1, 5) %}
+    {% set h = hls[i-1] if hls|length >= i else {'title':'','body':''} %}
+    <div class="field admin-hl-block">
+      <label>하이라이트 {{ i }} · 제목</label>
+      <input class="control" name="hl{{ i }}_title" type="text" value="{{ h.title }}" />
+      <label style="margin-top:8px;">하이라이트 {{ i }} · 내용</label>
+      <textarea class="control" name="hl{{ i }}_body" rows="3">{{ h.body }}</textarea>
+    </div>
+    {% endfor %}
+
+    <h2 class="admin-section-title">분양가 · 안내</h2>
+    <div class="field">
+      <label for="price_range">분양가 요약</label>
+      <input class="control" id="price_range" name="price_range" type="text"
+             value="{{ landing.price_range or '' }}" placeholder="예: 약 4.6억 ~ 5.97억대" />
+    </div>
+    <div class="field">
+      <label for="price_note">분양가 안내 문구</label>
+      <textarea class="control" id="price_note" name="price_note" rows="4">{{ landing.price_note or '' }}</textarea>
+    </div>
+    <div class="field">
+      <label for="disclaimer">하단 고지 / 면책</label>
+      <textarea class="control" id="disclaimer" name="disclaimer" rows="4">{{ landing.disclaimer or '' }}</textarea>
+    </div>
+
+    <button class="btn btn-accent" type="submit" style="position:sticky;bottom:72px;z-index:5;">문구 저장</button>
+  </form>
+
+  <div style="height:80px;"></div>
+
+  <nav class="bottom-nav">
+    <a href="/admin">목록</a>
+    <a class="active" href="/admin/landing">랜딩</a>
+    <a href="/admin/settings">설정</a>
+    <a href="{{ preview_path }}" target="_blank" rel="noopener">미리보기</a>
+  </nav>
+{% endblock %}

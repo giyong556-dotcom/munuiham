@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}문의 목록 · 문의함{% endblock %}
+{% block body %}
+  <div class="topbar">
+    <h1>문의 목록 {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}</h1>
+    <form method="post" action="/admin/logout" style="margin:0;">
+      <button class="pill" type="submit" style="cursor:pointer;">로그아웃</button>
+    </form>
+  </div>
+
+  <div class="nav-pills">
+    <a class="pill {% if not status_filter and not unread_only %}active{% endif %}" href="/admin">전체</a>
+    <a class="pill {% if unread_only %}active{% endif %}" href="/admin?unread=1">미읽음</a>
+    {% for s in statuses %}
+    <a class="pill {% if status_filter==s %}active{% endif %}" href="/admin?status_filter={{ s }}">{{ s }}</a>
+    {% endfor %}
+  </div>
+
+  {% if leads %}
+  <div class="lead-list">
+    {% for lead in leads %}
+    {% set interior = lead.form_slug == 'interior-quote' %}
+    <a class="lead-item {% if not lead.is_read %}unread{% endif %}" href="/admin/leads/{{ lead.id }}">
+      <div class="row1">
+        <div class="name">{{ lead.name }}{% if not lead.is_read %} ·{% endif %}</div>
+        <span class="status-tag status-{{ lead.status }}">{{ status_label(lead.status, interior=interior) }}</span>
+      </div>
+      <div class="meta">
+        {{ lead.phone }} · {{ lead.complex_name }}
+        {% if interior %}<span class="pill" style="margin-left:4px;font-size:11px;">인테리어</span>{% endif %}
+        <br />
+        {% if lead.budget %}{{ lead.budget }} · {% endif %}
+        {% if interior and lead.unit_size %}{{ lead.unit_size }} · {% endif %}
+        {{ lead.created_at }}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card empty">아직 문의가 없습니다.<br />폼 링크를 공유해 보세요.</div>
+  {% endif %}
+
+  <nav class="bottom-nav">
+    <a class="active" href="/admin">목록</a>
+    <a href="/admin/landing">랜딩</a>
+    <a href="/admin/settings">설정</a>
+    <a href="/l/dalseo-xi" target="_blank" rel="noopener">미리보기</a>
+  </nav>
+{% endblock %}

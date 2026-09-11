@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}{{ form.title }} · 문의함{% endblock %}
+{% block body %}
+  {% set is_zenique = form.slug == 'dalseo-xi-zenique' %}
+  <div class="brand{% if is_zenique %} brand-xi{% endif %}">
+    <div class="brand-mark">{% if is_zenique %}XI{% else %}문{% endif %}</div>
+    <div class="brand-text">
+      <strong>{% if is_zenique %}달서자이 제니크{% else %}문의함{% endif %}</strong>
+      <span>분양 상담 신청</span>
+    </div>
+  </div>
+
+  <section class="hero{% if is_zenique %} hero-xi{% endif %}">
+    <h1>{{ form.title }}</h1>
+    <p>{{ form.welcome_text }}</p>
+  </section>
+
+  {% if error %}
+  <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <form accept-charset="UTF-8" class="card{% if is_zenique %} card-xi{% endif %}" method="post" action="/f/{{ form.slug }}" novalidate>
+    <div class="field">
+      <label for="name">이름<span class="req">*</span></label>
+      <input class="control" id="name" name="name" type="text" required autocomplete="name"
+             placeholder="홍길동" value="{{ values.get('name','') }}" />
+    </div>
+
+    <div class="field">
+      <label for="phone">연락처<span class="req">*</span></label>
+      <input class="control" id="phone" name="phone" type="tel" inputmode="tel" required
+             autocomplete="tel" placeholder="010-1234-5678"
+             value="{{ values.get('phone','') }}" />
+      <div class="hint">휴대폰 번호를 입력해 주세요</div>
+    </div>
+
+    <div class="field">
+      <label for="complex_name">관심 단지</label>
+      <input class="control" id="complex_name" name="complex_name" type="text"
+             value="{{ values.get('complex_name') or form.complex_name }}" />
+    </div>
+
+    {% if not is_zenique %}
+    <div class="field">
+      <label>예산대</label>
+      <div class="chip-row">
+        {% set budgets = ['3억 이하','3~5억','5~7억','7억 이상'] %}
+        {% for b in budgets %}
+        <label class="chip">
+          <input type="radio" name="budget" value="{{ b }}" {% if values.get('budget')==b %}checked{% endif %} />
+          <span>{{ b }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="field">
+      <label>{% if is_zenique %}희망 타입{% else %}타입 (84㎡){% endif %}</label>
+      <div class="chip-row">
+        {% if is_zenique %}
+          {% set sizes = ['84A','84B','오피스텔','미정'] %}
+        {% else %}
+          {% set sizes = ['A타입','B타입','C타입'] %}
+        {% endif %}
+        {% for s in sizes %}
+        <label class="chip">
+          <input type="radio" name="unit_size" value="{{ s }}" {% if values.get('unit_size')==s %}checked{% endif %} />
+          <span>{{ s }}</span>
+        </label>
+        {% endfor %}
+      </div>
+      {% if is_zenique %}
+      <div class="hint">아파트 전용 84㎡ · 84A / 84B · 주거형 오피스텔</div>
+      {% else %}
+      <div class="hint">전용면적 84㎡ · A/B/C 타입</div>
+      {% endif %}
+    </div>
+
+    <div class="field">
+      <label for="age_group">연령대</label>
+      <select class="control" id="age_group" name="age_group">
+        <option value="">선택해 주세요</option>
+        {% for t in ['20대','30대','40대','50대','60대'] %}
+        <option value="{{ t }}" {% if values.get('age_group')==t %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="message">문의 내용</label>
+      <textarea class="control" id="message" name="message" placeholder="궁금하신 점을 자유롭게 적어 주세요">{{ values.get('message','') }}</textarea>
+    </div>
+
+    <div class="field">
+      <label>유입경로</label>
+      <div class="chip-row">
+        {% for src in ['인스타','카카오','지인','기타'] %}
+        <label class="chip">
+          <input type="radio" name="source" value="{{ src }}" {% if values.get('source')==src %}checked{% endif %} />
+          <span>{{ src }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- honeypot -->
+    <div class="hp" aria-hidden="true">
+      <label for="website">웹사이트</label>
+      <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <button class="btn {% if is_zenique %}btn-xi{% else %}btn-primary{% endif %}" type="submit">상담 문의 보내기</button>
+  </form>
+
+  <p class="footer-note">문의함 · 개인정보는 상담 목적으로만 사용됩니다</p>
+{% endblock %}

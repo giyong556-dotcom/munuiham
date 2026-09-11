@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}설정 · 문의함{% endblock %}
+{% block body %}
+  <div class="topbar">
+    <h1>기본 설정</h1>
+    <form accept-charset="UTF-8" method="post" action="/admin/logout" style="margin:0;">
+      <button class="pill" type="submit" style="cursor:pointer;">로그아웃</button>
+    </form>
+  </div>
+
+  {% if saved %}
+  <div class="alert alert-ok">설정이 저장되었습니다.</div>
+  {% endif %}
+
+  <form class="card" method="post" action="/admin/settings">
+    <div class="field">
+      <label for="form_title">폼 제목</label>
+      <input class="control" id="form_title" name="form_title" type="text" required
+             value="{{ settings.get('form_title','') }}" />
+    </div>
+    <div class="field">
+      <label for="default_complex">기본 관심 단지</label>
+      <input class="control" id="default_complex" name="default_complex" type="text" required
+             value="{{ settings.get('default_complex','') }}" />
+    </div>
+    <div class="field">
+      <label for="welcome_text">환영 문구</label>
+      <textarea class="control" id="welcome_text" name="welcome_text" required>{{ settings.get('welcome_text','') }}</textarea>
+    </div>
+    <div class="field">
+      <label for="success_text">완료 문구</label>
+      <textarea class="control" id="success_text" name="success_text" required>{{ settings.get('success_text','') }}</textarea>
+    </div>
+    <button class="btn btn-accent" type="submit">설정 저장</button>
+  </form>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="field" style="margin-bottom:0;">
+      <label>공개 폼 링크</label>
+      <div class="hint" style="margin:0;font-size:14px;font-weight:700;color:var(--ink);word-break:break-all;">
+        /f/{{ form.slug if form else 'dalseo-prugio' }}
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="/admin">목록</a>
+    <a href="/admin/landing">랜딩</a>
+    <a class="active" href="/admin/settings">설정</a>
+    <a href="/l/dalseo-xi" target="_blank" rel="noopener">미리보기</a>
+  </nav>
+{% endblock %}

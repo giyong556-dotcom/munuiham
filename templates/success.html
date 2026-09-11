@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}접수 완료 · 문의함{% endblock %}
+{% block body %}
+  <div class="brand">
+    <div class="brand-mark">문</div>
+    <div class="brand-text">
+      <strong>문의함</strong>
+      <span>접수 완료</span>
+    </div>
+  </div>
+
+  <div class="card success-wrap">
+    <div class="success-icon">✓</div>
+    <h1>문의가 접수되었습니다</h1>
+    <p>{{ form.success_text or settings.get('success_text','') }}</p>
+    <a class="btn btn-ghost" href="/f/{{ form.slug }}">다시 문의하기</a>
+  </div>
+{% endblock %}

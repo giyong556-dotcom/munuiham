@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% set L = landing or {} %}
+{% set hls = L.highlights if L.highlights is defined else [] %}
+{% block title %}{{ L.hero_title or '달서자이 제니크' }} · 분양 상담{% endblock %}
+{% block head %}
+  <meta name="theme-color" content="#0b1c33" />
+  <meta name="description" content="대구 달서구 본리동 달서자이 제니크 — GS건설 자이. 후분양·2027년 2월 입주 예정. 상담 문의." />
+{% endblock %}
+{% block body %}
+  <div class="xi-page">
+    <header class="xi-top">
+      <div class="xi-logo">
+        <span class="xi-logo-mark">XI</span>
+        <div class="xi-logo-text">
+          <strong>{{ L.hero_title or '달서자이 제니크' }}</strong>
+          <span>GS건설 · 자이</span>
+        </div>
+      </div>
+      <span class="xi-pill">후분양</span>
+    </header>
+
+    <section class="xi-hero{% if L.hero_image %} xi-hero-has-img{% endif %}">
+      {% if L.hero_image %}
+      <div class="xi-hero-media">
+        <img src="{{ L.hero_image }}" alt="{{ L.hero_title or '달서자이 제니크' }}" />
+      </div>
+      {% endif %}
+      <div class="xi-hero-copy">
+        <p class="xi-eyebrow">{{ L.hero_eyebrow or '대구 달서 · 본리동' }}</p>
+        <h1>{{ L.hero_title or '달서자이 제니크' }}</h1>
+        <p class="xi-tagline">{% set _sub = L.hero_subtitle or '후분양으로 더 빠르게,\n선착순 동호지정' %}{% for line in _sub.splitlines() %}{{ line }}{% if not loop.last %}<br />{% endif %}{% endfor %}</p>
+        <p class="xi-lead">{% set _lead = L.hero_lead or '지하 5층~최고 49층 · 총 438세대\n전용 84㎡ 단일 · 2027년 2월 입주 예정' %}{% for line in _lead.splitlines() %}{{ line }}{% if not loop.last %}<br />{% endif %}{% endfor %}</p>
+        <a class="btn btn-xi xi-hero-cta" href="#inquiry">{{ L.hero_cta or '무료 상담 신청' }}</a>
+      </div>
+    </section>
+
+    {% if L.gallery %}
+    <section class="xi-gallery" aria-label="단지 사진">
+      <div class="xi-gallery-track">
+        {% for img in L.gallery %}
+        <figure class="xi-gallery-item">
+          <img src="{{ img }}" alt="갤러리 {{ loop.index }}" loading="lazy" />
+        </figure>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="xi-facts" aria-label="핵심 정보">
+      <article class="xi-fact">
+        <span class="xi-fact-label">입지</span>
+        <strong>{{ L.fact_location or '달서구 본리동' }}</strong>
+        <span>{{ L.fact_location_detail or '661-9번지 일원 · 본리네거리 생활권' }}</span>
+      </article>
+      <article class="xi-fact">
+        <span class="xi-fact-label">규모</span>
+        <strong>{{ L.fact_scale or '총 438세대' }}</strong>
+        <span>{{ L.fact_scale_detail or '지하5~지상 최고 49층' }}</span>
+      </article>
+      <article class="xi-fact">
+        <span class="xi-fact-label">평형</span>
+        <strong>{{ L.fact_unit or '전용 84㎡' }}</strong>
+        <span>{{ L.fact_unit_detail or '타입 84A · 84B' }}</span>
+      </article>
+      <article class="xi-fact">
+        <span class="xi-fact-label">입주</span>
+        <strong>{{ L.fact_move_in or '2027. 2. 예정' }}</strong>
+        <span>{{ L.fact_move_in_detail or '' }}</span>
+      </article>
+    </section>
+
+    <section class="xi-section">
+      <h2>왜 {{ L.hero_title or '달서자이 제니크' }}인가</h2>
+      <ul class="xi-highlights">
+        {% set defaults = [
+          {'title':'최고 49층, 본리동 스카이라인을 열다','body':'최고 49층 스카이라인으로 본리동 일대를 새롭게 여는 GS건설 자이 단지입니다.'},
+          {'title':'계약 조건 (보도 기준)','body':'선착순 동호지정 계약 진행 · 1차 계약금 100만원 정액제 언급 사례가 있습니다. 최종은 사업주체 안내를 확인해 주세요.'},
+          {'title':'상품성','body':'남향 위주 · 알파룸·수납특화 · 시스템에어컨 등 기본옵션 · 주차 약 세대당 1.35대 수준.'},
+          {'title':'생활권','body':'본리네거리 생활권 · 덕인초 도보권(보도 기준).'}
+        ] %}
+        {% for i in range(4) %}
+        {% set h = hls[i] if hls|length > i else defaults[i] %}
+        {% set title = h.title if h.title else defaults[i].title %}
+        {% set body = h.body if h.body else defaults[i].body %}
+        <li>
+          <strong>{{ title }}</strong>
+          <span>{{ body }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section class="xi-section xi-price">
+      <h2>분양가 안내</h2>
+      <p class="xi-price-range">{{ L.price_range or '약 4.6억 ~ 5.97억대' }}</p>
+      <p class="xi-price-note">{{ L.price_note or '공개 보도 기준의 대략적 범위이며 층·타입별 상이합니다. 실제 분양가·일정·혜택은 모집공고 및 사업주체 안내가 우선하며, 상담 시 반드시 확인해 주세요. 본 페이지 정보는 변경될 수 있습니다.' }}</p>
+    </section>
+
+    <section class="xi-section xi-process">
+      <h2>상담 진행 안내</h2>
+      <ol class="xi-steps">
+        <li>아래 간단한 상담 신청서를 남겨 주세요</li>
+        <li>담당자가 연락드려 타입·조건·일정을 안내합니다</li>
+        <li>필요 시 방문·계약 일정을 함께 조율합니다</li>
+      </ol>
+      <p class="xi-privacy">개인정보는 상담 목적에만 사용되며, 스팸·광고 문자를 보내지 않습니다.</p>
+    </section>
+
+    <section class="xi-section xi-form-wrap" id="inquiry">
+      <div class="xi-form-head">
+        <h2>상담 문의</h2>
+        <p>{{ form.welcome_text }}</p>
+      </div>
+
+      {% if error %}
+      <div class="alert alert-error">{{ error }}</div>
+      {% endif %}
+
+      <form accept-charset="UTF-8" class="card card-xi" method="post" action="/f/{{ form.slug }}" novalidate>
+        <div class="field">
+          <label for="name">이름<span class="req">*</span></label>
+          <input class="control" id="name" name="name" type="text" required autocomplete="name"
+                 placeholder="홍길동" value="{{ values.get('name','') }}" />
+        </div>
+
+        <div class="field">
+          <label for="phone">연락처<span class="req">*</span></label>
+          <input class="control" id="phone" name="phone" type="tel" inputmode="tel" required
+                 autocomplete="tel" placeholder="010-1234-5678"
+                 value="{{ values.get('phone','') }}" />
+          <div class="hint">휴대폰 번호를 입력해 주세요</div>
+        </div>
+
+        <div class="field">
+          <label for="complex_name">관심 단지</label>
+          <input class="control" id="complex_name" name="complex_name" type="text"
+                 value="{{ values.get('complex_name') or form.complex_name }}" />
+        </div>
+
+        <div class="field">
+          <label>희망 타입</label>
+          <div class="chip-row chip-row-xi">
+            {% for s in ['84A','84B','오피스텔','미정'] %}
+            <label class="chip">
+              <input type="radio" name="unit_size" value="{{ s }}" {% if values.get('unit_size')==s %}checked{% endif %} />
+              <span>{{ s }}</span>
+            </label>
+            {% endfor %}
+          </div>
+          <div class="hint">아파트 전용 84㎡ · 84A / 84B · 주거형 오피스텔</div>
+        </div>
+
+        <div class="field">
+          <label for="age_group">연령대</label>
+          <select class="control" id="age_group" name="age_group">
+            <option value="">선택해 주세요</option>
+            {% for t in ['20대','30대','40대','50대','60대'] %}
+            <option value="{{ t }}" {% if values.get('age_group')==t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="message">문의 내용</label>
+          <textarea class="control" id="message" name="message" placeholder="동호·타입·일정 등 궁금하신 점을 적어 주세요">{{ values.get('message','') }}</textarea>
+        </div>
+
+        <div class="field">
+          <label>유입경로</label>
+          <div class="chip-row chip-row-xi">
+            {% for src in ['인스타','카카오','지인','기타'] %}
+            <label class="chip">
+              <input type="radio" name="source" value="{{ src }}" {% if values.get('source')==src %}checked{% endif %} />
+              <span>{{ src }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="hp" aria-hidden="true">
+          <label for="website">웹사이트</label>
+          <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <button class="btn btn-xi" type="submit">상담 문의 보내기</button>
+      </form>
+
+      <p class="xi-form-alt">
+        <a href="/f/{{ form.slug }}">폼만 따로 열기 →</a>
+      </p>
+    </section>
+
+    <footer class="xi-footer">
+      <p>{{ L.disclaimer or '본 페이지는 홍보·상담 안내용이며 분양가·일정·혜택은 모집공고·사업주체 안내가 우선합니다. 단지 정보·조건은 변경될 수 있으니 상담 시 확인해 주세요.' }}</p>
+      <p class="xi-footer-meta">문의함 · {{ L.hero_title or '달서자이 제니크' }} 상담</p>
+    </footer>
+
+    <div class="xi-cta-spacer" aria-hidden="true"></div>
+    <div class="xi-cta-bar">
+      <a class="btn btn-xi" href="#inquiry">{{ L.hero_cta or '지금 상담 신청' }}</a>
+    </div>
+  </div>
+{% endblock %}
